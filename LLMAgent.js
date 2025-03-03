@@ -3,6 +3,8 @@ var botName = "LLM Agent";
 var sdk     = require("./lib/sdk");
 var Promise = sdk.Promise;
 const axios = require('axios');
+// Importamos el logger que creaste en logger.js (ubicado en la raíz)
+const { logEvent } = require('./logger');
 
 module.exports = {
     botId   : botId,
@@ -20,34 +22,40 @@ module.exports = {
 
     // Manejo del webhook para procesar el LLM
     on_webhook: function(requestId, data, componentName, callback) {
-        // En este ejemplo, usaremos un único componente para llamar al LLM
         if (componentName === 'ProcessLLM') {
+            // Log: Se recibió el webhook
+            logEvent(`Received ProcessLLM webhook for requestId: ${requestId}`)
+              .catch(err => console.error("Error registrando log:", err));
+            
             // Responde de inmediato para evitar timeout en la plataforma que llama
             callback(null, new sdk.AsyncResponse());
             
             // Llama a tu API LLM de forma asíncrona usando Axios
             axios.post(process.env.MY_API_URL, {
                 "question": data.context.userInputs.originalInput.sentence,
-                "user_name":"koreai_user"
-                
+                "user_name": "koreai_user"
             }, {
                 headers: {
-                    
                     'Content-Type': 'application/json'
                 },
-                timeout: 120000  // Timeout de 2 minutos, ajustable según tus necesidades
+                timeout: 120000  // Timeout de 2 minutos
             })
             .then(function(response) {
-                data.context.respuestaLLM = response.data
-                sdk.respondToHook(data)
+                data.context.respuestaLLM = response.data;
+                sdk.respondToHook(data);
                 console.log("Respuesta de LLM:", response.data);
-                // Aquí podrías implementar la lógica para notificar al usuario o almacenar la respuesta
+                // Log: Llamada exitosa a la API LLM
+                logEvent(`LLM API call succeeded for requestId: ${requestId}`)
+                  .catch(err => console.error("Error registrando log:", err));
             })
             .catch(function(error) {
                 console.error("Error al llamar a la API LLM:", error);
+                // Log: Error en la llamada a la API LLM
+                logEvent(`LLM API call error for requestId: ${requestId}: ${error.message}`)
+                  .catch(err => console.error("Error registrando log:", err));
             });
         } else {
-            // En caso de recibir otro componente, puedes optar por responder con un mensaje por defecto
+            // Componente no reconocido
             callback(null, { message: "Componente no reconocido" });
         }
     }
