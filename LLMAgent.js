@@ -28,7 +28,6 @@ module.exports = {
             // Llama a tu API LLM de forma asíncrona usando Axios
             axios.post(process.env.MY_API_URL, data, {
                 headers: {
-                    'Authorization': process.env.MY_API_AUTH, // Si tu API requiere autenticación
                     'Content-Type': 'application/json'
                 },
                 timeout: 120000  // Timeout de 2 minutos, ajustable según tus necesidades
