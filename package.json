@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "## Introduction",
   "main": "LLMAgent.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "accepts": "^1.3.3",
     "ansi-styles": "^1.0.0",
@@ -70,9 +74,6 @@
     "varify": "^0.1.1",
     "vary": "^1.1.0",
     "wordwrap": "^0.0.3"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
