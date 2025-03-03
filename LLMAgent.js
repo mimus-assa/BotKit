@@ -23,16 +23,23 @@ module.exports = {
         // En este ejemplo, usaremos un único componente para llamar al LLM
         if (componentName === 'ProcessLLM') {
             // Responde de inmediato para evitar timeout en la plataforma que llama
-            callback(null, { message: "Procesando, recibirás la respuesta pronto" });
+            callback(null, new sdk.AsyncResponse());
             
             // Llama a tu API LLM de forma asíncrona usando Axios
-            axios.post(process.env.MY_API_URL, data, {
+            axios.post(process.env.MY_API_URL, {
+                "question": data.context.userInputs.originalInput.sentence,
+                "user_name":"koreai_user"
+                
+            }, {
                 headers: {
+                    
                     'Content-Type': 'application/json'
                 },
                 timeout: 120000  // Timeout de 2 minutos, ajustable según tus necesidades
             })
             .then(function(response) {
+                data.context.respuestaLLM = response.data
+                sdk.respondToHook(data)
                 console.log("Respuesta de LLM:", response.data);
                 // Aquí podrías implementar la lógica para notificar al usuario o almacenar la respuesta
             })
