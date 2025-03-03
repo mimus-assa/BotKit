@@ -14,9 +14,9 @@ async function connectDB() {
   if (!db) {
     try {
       await client.connect();
-      // Puedes cambiar 'botkit' por el nombre de la base de datos que prefieras.
-      db = client.db('botkit');
-      console.log("Conectado a MongoDB");
+      // Se conecta a la base de datos 'koreaidebug'
+      db = client.db('koreaidebug');
+      console.log("Conectado a MongoDB en la DB koreaidebug");
     } catch (err) {
       console.error("Error conectándose a MongoDB:", err);
       throw err;
@@ -28,7 +28,8 @@ async function connectDB() {
 async function logEvent(event) {
   try {
     const database = await connectDB();
-    const logs = database.collection("logs");
+    // Registra el log en la colección 'kore_logs'
+    const logs = database.collection("kore_logs");
     await logs.insertOne({ timestamp: new Date(), event });
     console.log("Evento registrado:", event);
   } catch (err) {
